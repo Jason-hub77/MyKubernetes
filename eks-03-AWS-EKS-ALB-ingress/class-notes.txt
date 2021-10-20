@@ -1,0 +1,145 @@
+'''''
+EKS CLUSTER
+```
+$ sudo yum update -y
+```
+$ curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.9/2020-08-04/bin/linux/amd64/kubectl
+```
+$ chmod +x ./kubectl
+```
+$ echo $PATH
+```
+$ sudo mv ./kubectl /usr/local/bin
+```
+$ kubectl version --short --client
+```
+$ curl -sSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+```
+$ curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.9/2020-08-04/bin/linux/amd64/kubectl
+```
+$ chmod +x ./kubectl
+```
+$ sudo mv ./kubectl /usr/local/bin
+```
+$ kubectl version --short --client
+```
+$ curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+```
+$ sudo mv /tmp/eksctl /usr/local/bin
+```
+$ eksctl version
+```
+$ ssh-keygen -f ~/.ssh/id_rsa
+
+****************
+
+$ eksctl create cluster \
+ --name jasoncluster \
+ --version 1.18 \
+ --region us-east-1 \
+ --nodegroup-name my-nodes \
+ --node-type t2.medium \
+ --nodes 1 \
+ --nodes-min 1 \
+ --nodes-max 2 \
+ --ssh-access \
+ --ssh-public-key  ~/.ssh/id_rsa.pub \
+ --managed
+```
+
+****************
+
+$ curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.2.1/docs/install/iam_policy.json
+```
+$ aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://iam_policy.json
+```
+$ eksctl create iamserviceaccount \
+  --cluster=jasoncluster \
+  --namespace=kube-system \
+  --name=aws-load-balancer-controller \
+  --attach-policy-arn=arn:aws:iam::897139486224:policy/AWSLoadBalancerControllerIAMPolicy \
+  --override-existing-serviceaccounts \
+  --approve
+```
+$ eksctl utils associate-iam-oidc-provider --region=us-east-1 --cluster=jasoncluster --approve
+```
+
+2. Kez giriliyor...
+
+$ eksctl create iamserviceaccount \
+  --cluster=jasoncluster \
+  --namespace=kube-system \
+  --name=aws-load-balancer-controller \
+  --attach-policy-arn=arn:aws:iam::897139486224:policy/AWSLoadBalancerControllerIAMPolicy \
+  --override-existing-serviceaccounts \
+  --approve
+
+$ kubectl get deployment -n kube-system alb-ingress-controller
+```
+Error from server (NotFound): deployments.apps "alb-ingress-controller" not found
+
+$ helm repo add eks https://aws.github.io/eks-charts
+```"eks" has been added to your repositories
+
+$ helm repo update
+```
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "eks" chart repository
+Update Complete. ⎈Happy Helming!⎈
+
+$ helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --set clusterName=jasoncluster \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller 
+```
+NAME: aws-load-balancer-controller
+LAST DEPLOYED: Mon Oct 18 18:41:47 2021
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+AWS Load Balancer controller installed!
+```
+
+$ kubectl get deployment -n kube-system aws-load-balancer-controller
+```
+NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
+aws-load-balancer-controller   2/2     2            2           41s
+
+$  scp -i ~/Downloads/serdar.pem ./k8s/* ec2-user@3.80.112.201:/home/ec2-user/k8s
+scp -i ~/Downloads/serdar.pem (pem key yeri) ./k8s/* (Dosya) ec2-user@3.80.112.201(publicIP):/home/ec2-user/k8s (aktarılan yer)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$ 
+```
+$ 
+```
+
+
+
+
+
+$ https://helm.sh/docs/helm/helm/
+'``
+$ https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html
